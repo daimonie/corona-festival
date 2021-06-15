@@ -22,3 +22,10 @@ unittest:
 test:
 	make pep8
 	make unittest
+
+
+exec:
+	docker run -v $(PWD)/container/:/opt/container \
+	--rm --entrypoint=/bin/bash corona-festival:latest /opt/container/entrypoint
+
+app: install test exec
