@@ -6,6 +6,7 @@ import logging
 import theano.tensor as tt
 import pymc3 as pm
 from datetime import datetime
+from corona_festival.utils import setup_log, savefig, startfig, stop
 
 filenames = {
     "raw": 'data/raw_data.csv'
@@ -13,7 +14,7 @@ filenames = {
 
 
 if __name__ == "__main__":
-    setup_log(name='bayes')
+    setup_log(name='corona')
     logging.info("Logging has been setup.")
 
 
