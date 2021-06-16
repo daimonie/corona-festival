@@ -1,6 +1,6 @@
 install:
 	docker run hello-world
-	docker build  -f Dockerfile -t corona-festival .
+	docker build --no-cache -f Dockerfile -t corona-festival .
 
 dev:
 	docker run -v $(PWD)/container/:/opt/container \
