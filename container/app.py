@@ -7,13 +7,15 @@ import theano.tensor as tt
 import pymc3 as pm
 from datetime import datetime
 from corona_festival.utils import setup_log, savefig, startfig, stop
-from corona_festival.model import beta_normal_model
+from corona_festival.model import beta_normal_model, bayesian_test
 
 filenames = {
     "raw": 'data/raw_data.csv',
     "explore": 'figures/explore_{situation}.png',
     "burned_trace": 'figures/burned_trace_{situation}.png',
-    "burned_trace_csv": 'figures/burned_trace_{situation}.csv'
+    "burned_trace_csv": 'figures/burned_trace_{situation}.csv',
+    "bayesian_test": "figures/bayesian_test.png",
+    "bayesian_test_csv": "figures/bayesian_test.csv"
 }
 
 
@@ -72,3 +74,28 @@ if __name__ == "__main__":
         pm.trace_to_dataframe(burned_trace).to_csv(filenames['burned_trace_csv'].format(
             situation=situation
         ))
+
+
+    # a/b test
+    df_control = df_festivals[df_festivals.situation == "unfettered"]
+    df_measures = df_festivals[df_festivals.situation == "measures"]
+
+    burned_trace = bayesian_test(
+        control_data=df_control,
+        test_data=df_measures, 
+        hyper_p_mu=real_num_corona/real_population_number,
+        hyper_p_sigma=2*real_num_corona/real_population_number,
+        hyper_r_mu=3,
+        hyper_r_sigma=.2,
+        false_negative=false_negative,
+        sample=10000,
+        cores=6,
+        chains=4
+    )
+
+    startfig()
+    plt.title("Burn trace.")
+    pm.plot_trace(burned_trace)
+    savefig(filenames['bayesian_test']) 
+
+    pm.trace_to_dataframe(burned_trace).to_csv(filenames['bayesian_test_csv'])
