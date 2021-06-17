@@ -57,7 +57,7 @@ if __name__ == "__main__":
             hyper_r_mu=3,
             hyper_r_sigma=.2,
             false_negative=false_negative,
-            sample=10000,
+            sample=2000,
             cores=6,
             chains=4
         )
