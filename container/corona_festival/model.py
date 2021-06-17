@@ -37,10 +37,10 @@ def beta_normal_model(
         lam = p * r * false_negative 
         lam_print = tt.printing.Print("lam")(lam)
 
-        observed = pm.Normal(
+        observed = pm.Poisson(
             "observed",
             mu=lam* data_visitors,
-            sigma=50,
+            #sigma=50,
             observed=data_infected
         )
 
