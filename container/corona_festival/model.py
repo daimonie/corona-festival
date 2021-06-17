@@ -26,8 +26,12 @@ def beta_normal_model(
     data_visitors = df_data.visitors.values
     data_infected = df_data.infected.values
 
+    normal_positive = pm.Bound(
+        pm.Normal,
+        lower=0
+    )
     with pm.Model() as model:
-        r = pm.Normal(
+        r = normal_positive(
             'r',
             mu = hyper_r_mu,
             sigma = hyper_r_sigma
@@ -37,10 +41,10 @@ def beta_normal_model(
         lam = p * r * false_negative 
         lam_print = tt.printing.Print("lam")(lam)
 
-        observed = pm.Normal(
+        observed = pm.Poisson(
             "observed",
             mu=lam* data_visitors,
-            sigma=50,
+            #sigma=50,
             observed=data_infected
         )
 
@@ -55,7 +59,8 @@ def beta_normal_model(
             start=start,
             chains=chains,
             cores=cores,
-            tune=tune
+            tune=tune,
+            return_inferencedata=False
         )
         burned_trace = trace[int(sample*4/5):]
 
